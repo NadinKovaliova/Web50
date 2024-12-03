@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Search</title>
+        <link rel="stylesheet" href="styles.css">
+       
+    </head>   
+    <body>
+        <div class="nav">
+            <a href="image.html">Image Search</a>
+            <a href="advanced.html">Advanced Search</a>
+        </div>
+        <div class="content">
+            
+            <img id="logo" src="logo.gif" alt="Google Logo">
+            <div class="searchboxContainer">
+                <form action="https://google.com/search">
+                    <input id="input" type="search" name="q" placeholder="Search Google or type a URL">
+                    <div class="buttons">
+                        <button type="submit" class="btn">Google Search</button>
+                        <button id="luckyButton" type="button" class="btn" onclick="feelingLucky()"> I'm Feeling Lucky </button>
+                    </div>
+                </form>
+            </div>
+
+        </div> 
+        <script>
+            function feelingLucky() {
+                window.location.href = "https://www.google.com/doodles";
+            }
+            document.getElementById("luckyButton").addEventListener("click", function () {
+                const query = document.getElementById("input").value.trim();
+                if (query) {
+                    // Redirect to the "I'm Feeling Lucky" Google URL
+                    const luckyUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&btnI=1`;
+                    window.location.href = luckyUrl;
+                } else {
+                    alert("Please enter a search query.");
+                }
+            });
+        </script>
+    </body>
+</html>
