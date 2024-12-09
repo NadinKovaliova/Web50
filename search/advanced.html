@@ -7,31 +7,37 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <img src="logo.gif" alt="Google Logo" class="logo_adv">
     <div class="nav">
         <a href="index.html">Google Search</a>
         <a href="image.html">Image Search</a>
     </div>
-    <div class="content">
-        
-        
-
-        <img src="logo.gif" alt="Google Logo" class="logo">
-
+    <div class="content_adv">
+        <h1 class="title">Advanced search</h1>
+        <hr style="">
         <!-- Advanced Search Form -->
         <div class="searchboxContainer">
             <form action="https://www.google.com/search" method="GET">
                 <div class="advanced-options">
-                    <label for="all">Find pages with… <strong>all these words:</strong></label>
-                    <input type="text" id="all" name="as_q" class="input-box">
-
-                    <label for="exact">Find pages with… <strong>this exact word or phrase:</strong></label>
-                    <input type="text" id="exact" name="as_epq" class="input-box">
-
-                    <label for="any">Find pages with… <strong>any of these words:</strong></label>
-                    <input type="text" id="any" name="as_oq" class="input-box">
-
-                    <label for="none">Find pages with… <strong>none of these words:</strong></label>
-                    <input type="text" id="none" name="as_eq" class="input-box">
+                    <div>
+                        <label for="all">Find pages with… <strong>all these words:</strong></label>
+                        <input type="text" id="all" name="as_q" class="input-box">
+                    </div>
+                    <div>
+                        <label for="exact">Find pages with… <strong>this exact word or phrase:</strong></label>
+                        <input type="text" id="exact" name="as_epq" class="input-box">
+                    </div>
+                    
+                    <div>
+                        <label for="any">Find pages with… <strong>any of these words:</strong></label>
+                        <input type="text" id="any" name="as_oq" class="input-box">
+                    </div>
+                    
+                    <div>
+                        <label for="none">Find pages with… <strong>none of these words:</strong></label>
+                        <input type="text" id="none" name="as_eq" class="input-box">
+                    </div>
+                    
                 </div>
 
                 <!-- Submit Button -->

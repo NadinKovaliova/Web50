@@ -33,12 +33,40 @@ body {
     margin-top: 20vh;
 }
 
+.title {
+  color: #d93025;
+  text-align: left;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+
+.content_adv {
+  align-items: left;
+  display: flex;
+  flex-direction: column;
+  min-width: fit-content;
+  position: relative;
+  z-index: 1;
+  margin-top: 10vh;
+  margin-left: 40px;
+}
+
+
 #logo {
     height: auto;
     width: 30%;
     margin-bottom: 38px;
     z-index: 1;
 }
+
+.logo_adv  {
+  height: auto;
+  width: 74px;
+  display: block;
+  margin: 40px;
+}
+
 
 .searchboxContainer {
   display: inherit;
@@ -90,14 +118,41 @@ body {
   background-color: #f1f1f1;
 }
 
+.advanced-options {
+  display: flex;
+  flex-direction: column;
+}
 
+.advanced-options div {
+  display: flex;
+  align-items: center; /* Align label and input vertically */
+  gap: 10px;
+
+
+}
 
 .advanced-options label {
   display: block;
-  font-weight: bold;
+  
   margin-bottom: 5px;
+  flex: 1; 
+  min-width: 150px;
 }
 
+@media (max-width: 600px) {
+  .advanced-options {
+      flex-direction: column; /* Stack label and input vertically */
+      align-items: stretch;
+  }
+  .advanced-options div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  label {
+      margin-bottom: 5px; /* Add spacing below the label */
+  }
+}
 .advanced-options .input-box {
   width: 100%;
   padding: 10px;
