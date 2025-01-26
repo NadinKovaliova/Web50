@@ -4,8 +4,13 @@ from django.db import models
 
 class User(AbstractUser):
     pass
+
+
 class Category(models.Model):
     categoryName = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.categoryName
 
 class AuctionListing(models.Model):
     title = models.CharField(max_length=100)
@@ -19,8 +24,14 @@ class AuctionListing(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def current_price(self):
+        highest_bid = self.bids.order_by('-amount').first()
+        return highest_bid.amount if highest_bid else self.start_bid
 
-
+    def highest_bidder(self):
+        highest_bid = self.bids.order_by('-amount').first()
+        return highest_bid.bidder if highest_bid else None
 
 
 class Bid(models.Model):
@@ -41,3 +52,8 @@ class Comment(models.Model) :
 
     def __str__(self):
         return f"{self.author} commented on {self.listing.title}"
+    
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
+    listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="watchlist")
+    
