@@ -6,14 +6,15 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import User, AuctionListing, Bid, Comment, Watchlist
+from .models import User, AuctionListing, Bid, Comment
 from .forms import CreateListingForm, BidForm, CommentForm
 
 def index(request):
     active_listings= AuctionListing.objects.filter(is_active=True)
 
     return render(request, "auctions/index.html", {
-        "listings": active_listings
+        "listings": active_listings,
+        
     })
 
 
@@ -87,7 +88,7 @@ def listing(request, listing_id):
     listing = get_object_or_404(AuctionListing, id=listing_id)
     comments = listing.comments.all()
     current_user = request.user
-    is_in_watchlist = current_user.is_authenticated and Watchlist.objects.filter(user=current_user, listing=listing).exists
+    is_in_watchlist = current_user.is_authenticated and listing in current_user.watchlist.all()
 
 
     if request.method == "POST":
@@ -110,10 +111,10 @@ def listing(request, listing_id):
                 return redirect("listing", listing_id=listing.id)
         elif "watchlist_action" in request.POST:
             if is_in_watchlist:
-                Watchlist.objects.filter(user=current_user, listing=listing).delete()
+                current_user.watchlist.remove(listing)
                 messages.success(request, "Removed from watchlist.")
             else:
-                Watchlist.objects.create(user=current_user, listing=listing)
+                current_user.watchlist.add(listing)
                 messages.success(request, "Added to watchlist.")
             return redirect("listing", listing_id=listing.id)
         elif "close_auction" in request.POST:
@@ -133,3 +134,4 @@ def listing(request, listing_id):
         "comment_form": comment_form,
         "is_in_watchlist": is_in_watchlist
     })
+

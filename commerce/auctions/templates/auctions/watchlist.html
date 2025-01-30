@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Your Watchlist</h2>
+    {% if watchlist %}
+        <ul>
+            {% for listing in watchlist %}
+                <li>
+                    <a href="{% url 'listing' listing.id %}">{{ listing.title }}</a> - 
+                    Current Price: ${{ listing.current_price }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no items in your watchlist.</p>
+    {% endif %}
+{% endblock %}

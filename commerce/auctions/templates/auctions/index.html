@@ -2,6 +2,7 @@
 
 {% block body %}
     <h2>Active Listings</h2>
+
     <div class="listing-container">
         {% for listing in listings %}
         <div class="listing-card">
@@ -9,7 +10,7 @@
             <p>{{ listing.description }}</p>
             <p><strong>Current Price:</strong> ${{ listing.current_price }}</p>
             {% if listing.image_url %}
-            <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="lising-image">
+            <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="listing-image">
             {% endif %}
             <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
 
@@ -17,24 +18,33 @@
         </div>
         {% endfor %}
     </div>
+
     <style>
     .listing-container {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
     }
+
     .listing-card {
         border: 1px solid #ddd;
         border-radius: 5px;
         padding: 15px;
         width: 300px;
         text-align: center;
+        box-sizing: unset;
     }
+
     .listing-image {
-        max-width: 100%;
-        height: auto;
-        margin-bottom: 10px;
+        
+        width: 300px; /* Set the desired width */
+        height: 300px; /* Set the desired height */
+        object-fit: cover; /* Ensures the image fills the dimensions while cropping if necessary */
+        border-radius: 10px; /* Optional: Adds rounded corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a slight shadow for better visual effect */
+        margin-bottom: 20px; /* Adds spacing below the image */
     }
+
     
     </style>
 {% endblock %}
