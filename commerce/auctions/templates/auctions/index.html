@@ -2,6 +2,20 @@
 
 {% block body %}
     <h2>Active Listings</h2>
+    <form class="filter" action="{% url 'displayCategory' %}" method="POST">
+        {%csrf_token %}
+        <label for="category">Choose a category: </label>
+            <select name="category" id="category">
+                {% for category in categories %}
+                    <option value="{{category}}">{{category}}</option>
+                    {% endfor %}
+            </select>
+        <button id="select" type="submit" class="btn btn-light">Select</button>
+    </form>
+
+
+
+
 
     <div class="listing-container">
         {% for listing in listings %}
@@ -10,11 +24,11 @@
             <p>{{ listing.description }}</p>
             <p><strong>Current Price:</strong> ${{ listing.current_price }}</p>
             {% if listing.image_url %}
-            <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="listing-image">
+            <a href="{% url 'listing' listing.id %}">
+                <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="listing-image">
+            </a>
             {% endif %}
-            <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
-
-            
+            <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a> 
         </div>
         {% endfor %}
     </div>
@@ -45,6 +59,25 @@
         margin-bottom: 20px; /* Adds spacing below the image */
     }
 
+    .filter {
+        margin-bottom: 10px;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: baseline;
+    }
     
+    #select {
+        margin: 5px;
+        
+    }
+
+    #category {
+        margin: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #f1f1f1;
+    }
     </style>
 {% endblock %}

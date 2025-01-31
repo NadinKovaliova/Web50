@@ -6,18 +6,33 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import User, AuctionListing, Bid, Comment
+from .models import User, AuctionListing, Bid, Comment, Category
 from .forms import CreateListingForm, BidForm, CommentForm
 
 def index(request):
     active_listings= AuctionListing.objects.filter(is_active=True)
+    categories = Category.objects.all()
 
     return render(request, "auctions/index.html", {
         "listings": active_listings,
+        "categories" : categories
         
     })
 
+def displayCategory(request):
+    if request.method == "POST":
+        categoryFromForm = request.POST.get('category')
+        category = get_object_or_404(Category, categoryName=categoryFromForm)
 
+
+        active_listings= AuctionListing.objects.filter(is_active=True, category=category)
+        categories = Category.objects.all()
+
+        return render(request, "auctions/index.html", {
+            "listings": active_listings,
+            "categories" : categories
+        })
+    
 def login_view(request):
     if request.method == "POST":
 
@@ -89,7 +104,7 @@ def listing(request, listing_id):
     comments = listing.comments.all()
     current_user = request.user
     is_in_watchlist = current_user.is_authenticated and listing in current_user.watchlist.all()
-
+    
 
     if request.method == "POST":
        if "place_bid" in request.POST:
@@ -108,15 +123,7 @@ def listing(request, listing_id):
                 text = comment_form.cleaned_data['text']
                 Comment.objects.create(listing=listing, commenter=current_user, text=text)
                 messages.success(request, "Comment added successfully!")
-                return redirect("listing", listing_id=listing.id)
-        elif "watchlist_action" in request.POST:
-            if is_in_watchlist:
-                current_user.watchlist.remove(listing)
-                messages.success(request, "Removed from watchlist.")
-            else:
-                current_user.watchlist.add(listing)
-                messages.success(request, "Added to watchlist.")
-            return redirect("listing", listing_id=listing.id)
+                return redirect("listing", listing_id=listing.id)   
         elif "close_auction" in request.POST:
             if listing.owner == current_user:
                 listing.is_active = False
@@ -124,6 +131,7 @@ def listing(request, listing_id):
                 messages.success(request, "Auction closed!")
                 return redirect("listing", listing_id=listing.id)
             
+
 
     bid_form = BidForm()
     comment_form = CommentForm()
@@ -134,4 +142,26 @@ def listing(request, listing_id):
         "comment_form": comment_form,
         "is_in_watchlist": is_in_watchlist
     })
+
+
+@login_required
+def watchlist(request):
+    # Get the current user's watchlist
+    user_watchlist = request.user.watchlist.all()
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": user_watchlist
+    })
+
+@login_required
+def toggle_watchlist(request, listing_id):
+    listing = get_object_or_404(AuctionListing, id=listing_id)
+    if listing in request.user.watchlist.all():
+        # Remove from watchlist
+        request.user.watchlist.remove(listing)
+        messages.success(request, "Removed from watchlist.")
+    else:
+        # Add to watchlist
+        request.user.watchlist.add(listing)
+        messages.success(request, "Added to watchlist.")
+    return redirect("listing", listing_id=listing_id)
 

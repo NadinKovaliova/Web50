@@ -25,6 +25,9 @@
                     <a class="nav-link" href="{% url 'create_listing' %}">Create Listing</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'watchlist' %}">Your Watchlist</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                 </li>
             {% else %}
@@ -37,6 +40,16 @@
             {% endif %}
         </ul>
         <hr>
+        <style>
+            body {
+                padding-left: 40px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            .nav {
+                
+            }
+        </style>
         {% block body %}
         {% endblock %}
     </body>
