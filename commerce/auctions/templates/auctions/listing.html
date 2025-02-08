@@ -19,12 +19,12 @@
 {% endif %}
 {% if listing.is_active %}
     {% if user.is_authenticated %}
-        <form method="post" action="{% url 'toggle_watchlist' listing.id %}">
+        <form method="post">
             {% csrf_token %}
-            {% if listing in user.watchlist.all %}
-            <button type="submit" class="btn btn-danger">Remove from Watchlist</button>
+            {% if is_in_watchlist %}
+                <button type="submit" name="watchlist_action" class="btn btn-warning">Remove from Watchlist</button>
             {% else %}
-            <button type="submit" class="btn btn-success">Add to Watchlist</button>
+                <button type="submit" name="watchlist_action" class="btn btn-success">Add to Watchlist</button>
             {% endif %}
         </form>
 
@@ -52,9 +52,15 @@
 
 <h3>Comments</h3>
 {% if comments %}
-<ul>
+<ul class="comment-list">
     {% for comment in comments %}
-    <li><strong>{{ comment.commenter }}</strong>: {{ comment.text }}</li>
+    <li class="comment-item">
+        <div class="comment-header">
+            <strong>{{ comment.author }}</strong>
+            <span class="comment-timestamp">{{ comment.timestamp|date:"g:i A" }} {{ comment.timestamp|timesince }} ago</span>
+        </div>
+        <div class="comment-content">{{ comment.content }}</div>
+    </li>
     {% endfor %}
 </ul>
 {% else %}
@@ -69,17 +75,40 @@
 </form>
 {% endif %}
 
-
 <style>
     .listing-image {
         max-width: 400px;
         height: auto;
         margin-bottom: 20px;
-        border-radius: 10px; /* Optional: Adds rounded corners */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a slight shadow for better visual effect */
-      
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    </style>
+
+    .comment-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .comment-item {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+
+    .comment-timestamp {
+        font-size: 0.9em;
+        color: #888;
+    }
+
+    .comment-content {
+        margin-left: 10px;
+    }
+</style>
 {% endblock %}
 
 

@@ -22,15 +22,18 @@ def index(request):
 def displayCategory(request):
     if request.method == "POST":
         categoryFromForm = request.POST.get('category')
-        category = get_object_or_404(Category, categoryName=categoryFromForm)
-
-
-        active_listings= AuctionListing.objects.filter(is_active=True, category=category)
         categories = Category.objects.all()
+        
+        if categoryFromForm == 'all':
+            active_listings = AuctionListing.objects.filter(is_active=True)
+        else:
+            category = get_object_or_404(Category, categoryName=categoryFromForm)
+            active_listings = AuctionListing.objects.filter(is_active=True, category=category)
 
         return render(request, "auctions/index.html", {
             "listings": active_listings,
-            "categories" : categories
+            "categories": categories,
+            "selected_category": categoryFromForm
         })
     
 def login_view(request):
@@ -107,31 +110,43 @@ def listing(request, listing_id):
     
 
     if request.method == "POST":
-       if "place_bid" in request.POST:
-        bid_form = BidForm(request.POST)
-        if bid_form.is_valid():
-            amount = bid_form.cleaned_data['amount']
-            if amount < listing.current_price():
-                messages.error(request, "Your bid must be higher than the current price.")
-            else:
-                Bid.objects.create(listing=listing, bidder=current_user, amount=amount)
-                messages.success(request, "Bid placed successfully!")
-                return redirect("listing", listing_id=listing.id)
+        if "place_bid" in request.POST:
+            bid_form = BidForm(request.POST)
+            if bid_form.is_valid():
+                amount = bid_form.cleaned_data['amount']
+                if amount < listing.current_price():
+                    messages.error(request, "Your bid must be higher than the current price.")
+                else:
+                    Bid.objects.create(listing=listing, bidder=current_user, amount=amount)
+                    messages.success(request, "Bid placed successfully!")
+                    return redirect("listing", listing_id=listing.id)
         elif "add_comment" in request.POST:
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
-                text = comment_form.cleaned_data['text']
-                Comment.objects.create(listing=listing, commenter=current_user, text=text)
+                content = comment_form.cleaned_data['text']
+                Comment.objects.create(listing=listing, author=current_user, content=content)
                 messages.success(request, "Comment added successfully!")
-                return redirect("listing", listing_id=listing.id)   
+                return redirect("listing", listing_id=listing.id)
+            else:
+                # Print form errors to the console
+                print("Comment form is not valid:", comment_form.errors)
+                messages.error(request, "There was an error with your comment. Please try again.")
+        elif "watchlist_action" in request.POST:
+            if listing in request.user.watchlist.all():
+                # Remove from watchlist
+                request.user.watchlist.remove(listing)
+                messages.success(request, "Removed from watchlist.")
+            else:
+                # Add to watchlist
+                request.user.watchlist.add(listing)
+                messages.success(request, "Added to watchlist.")
+            return redirect("listing", listing_id=listing_id)
         elif "close_auction" in request.POST:
             if listing.owner == current_user:
                 listing.is_active = False
                 listing.save()
                 messages.success(request, "Auction closed!")
                 return redirect("listing", listing_id=listing.id)
-            
-
 
     bid_form = BidForm()
     comment_form = CommentForm()
@@ -153,15 +168,13 @@ def watchlist(request):
     })
 
 @login_required
-def toggle_watchlist(request, listing_id):
-    listing = get_object_or_404(AuctionListing, id=listing_id)
-    if listing in request.user.watchlist.all():
-        # Remove from watchlist
-        request.user.watchlist.remove(listing)
-        messages.success(request, "Removed from watchlist.")
-    else:
-        # Add to watchlist
-        request.user.watchlist.add(listing)
-        messages.success(request, "Added to watchlist.")
-    return redirect("listing", listing_id=listing_id)
+def archive(request):
+    # Get all closed listings owned by the current user
+    archived_listings = AuctionListing.objects.filter(
+        owner=request.user,
+        is_active=False
+    )
+    return render(request, "auctions/archive.html", {
+        "listings": archived_listings
+    })
 
