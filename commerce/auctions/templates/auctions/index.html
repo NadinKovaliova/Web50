@@ -21,7 +21,7 @@
         <div class="listing-card">
             <a href="{% url 'listing' listing.id %}">
             <h3>{{ listing.title }}</h3>
-            <p>{{ listing.description }}</p>
+            <p class="description-preview">{{ listing.description }}</p>
             <p><strong>Current Price:</strong> ${{ listing.current_price }}</p>
             {% if listing.image_url %}
                 <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="listing-image">
@@ -33,6 +33,14 @@
     </div>
 
     <style>
+    .description-preview {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 270px; /* Adjust based on your card width and padding */
+        margin: 0 auto;
+    }
+    
     a {
         text-decoration: none;
         color: black;
