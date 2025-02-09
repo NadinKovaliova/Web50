@@ -23,12 +23,19 @@
         {% endif %}
         <form method="post">
             {% csrf_token %}
-            {% if is_in_watchlist %}
-                <button type="submit" name="watchlist_action" class="btn btn-warning">Remove from Watchlist</button>
-            {% else %}
-                {% if listing.is_active %}
-                    <button type="submit" name="watchlist_action" class="btn btn-success">Add to Watchlist</button>
+            {% if user.is_authenticated %}
+                {% if is_in_watchlist %}
+                    <button type="submit" name="watchlist_action" class="btn btn-warning">Remove from Watchlist</button>
+                {% else %}
+                    {% if listing.is_active %}
+                        <button type="submit" name="watchlist_action" class="btn btn-success">Add to Watchlist</button>
+                    {% endif %}
                 {% endif %}
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle"></i> 
+                    Please <a href="{% url 'login' %}" class="alert-link">log in</a> to add this item to your watchlist.
+                </div>
             {% endif %}
         </form>
         {% if listing.is_active %}
@@ -45,6 +52,11 @@
                         <button type="submit" name="close_auction" class="btn btn-danger">Close Auction</button>
                     </form>
                 {% endif %}
+            {% else %}
+                <div class="alert alert-info mt-3" role="alert">
+                    <i class="fas fa-info-circle"></i> 
+                    Please <a href="{% url 'login' %}" class="alert-link">log in</a> to place a bid.
+                </div>
             {% endif %}
         {% else %}
             <p class="text-success">This auction has been closed.</p>
@@ -80,6 +92,11 @@
     {{ comment_form.as_p }}
     <button type="submit" name="add_comment" class="btn btn-secondary">Add Comment</button>
 </form>
+{% else %}
+    <div class="alert alert-info mt-3" role="alert">
+        <i class="fas fa-info-circle"></i> 
+        Please <a href="{% url 'login' %}" class="alert-link">log in</a> to add a comment.
+    </div>
 {% endif %}
 
 <style>
@@ -129,6 +146,31 @@
 
     .comment-content {
         margin-left: 10px;
+    }
+    
+    .alert {
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+
+    .alert-info {
+        background-color: #e8f4f8;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+
+    .alert-link {
+        color: #0c5460;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .alert-link:hover {
+        color: #083038;
+    }
+
+    .fa-info-circle {
+        margin-right: 5px;
     }
 </style>
 {% endblock %}
