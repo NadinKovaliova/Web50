@@ -169,10 +169,13 @@ function view_email(email_id) {
     emailView.style.borderRadius = '8px';
     emailView.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
 
-    // Create archive button HTML only if email is not in sent mailbox
-    const archiveButton = `<button class="btn btn-primary" style="background-color: #e74c3c; border: none; padding: 8px 16px; border-radius: 6px;" onclick="toggle_archive(${email_id}, ${!email.archived})">
-      ${email.archived ? 'Unarchive' : 'Archive'}
-    </button>`;
+    // Create archive button HTML only if not in sent mailbox
+    const archiveButton = currentMailbox !== 'sent' ? 
+      `<button class="btn btn-primary" 
+        style="background-color: #e74c3c; border: none; padding: 8px 16px; border-radius: 6px;" 
+        onclick="toggle_archive(${email_id}, ${!email.archived})">
+        ${email.archived ? 'Unarchive' : 'Archive'}
+      </button>` : '';
 
     // Create unread button HTML only for received and non-archived emails
     const unreadButton = (email.sender !== document.querySelector('#compose-form [disabled]').value && !email.archived) ? 
