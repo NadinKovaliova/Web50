@@ -171,11 +171,11 @@ function view_email(email_id) {
 
     // Create archive button HTML only if not in sent mailbox
     const archiveButton = currentMailbox !== 'sent' ? 
-      `<button class="btn btn-primary" 
-        style="background-color: #e74c3c; border: none; padding: 8px 16px; border-radius: 6px;" 
-        onclick="toggle_archive(${email_id}, ${!email.archived})">
-        ${email.archived ? 'Unarchive' : 'Archive'}
-      </button>` : '';
+`<button class="btn btn-primary" 
+style="background-color: #e74c3c; border: none; padding: 8px 16px; border-radius: 6px;" 
+onclick="toggle_archive(${email_id}, ${!email.archived})">
+      ${email.archived ? 'Unarchive' : 'Archive'}
+    </button>` : '';
 
     // Create unread button HTML only for received and non-archived emails
     const unreadButton = (email.sender !== document.querySelector('#compose-form [disabled]').value && !email.archived) ? 
@@ -251,8 +251,11 @@ function reply_email(email) {
   document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
+  const currentUserEmail = document.querySelector('#compose-form [disabled]').value;
+
   // Pre-fill recipient field
   const allRecipients = new Set([email.sender, ...email.recipients]);
+  allRecipients.delete(currentUserEmail);
   document.querySelector('#compose-recipients').value = Array.from(allRecipients).join(', ');
 
   // Pre-fill subject line
