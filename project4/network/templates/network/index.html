@@ -1,0 +1,144 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+
+<div class="container">
+    {% if user.is_authenticated %}
+    <!-- Collapsed Post Form -->
+    <div class="post-form-container mb-4">
+        <div class="post-form-trigger" onclick="expandPostForm()">
+            <div class="avatar">
+                <!-- You can add user avatar here -->
+            </div>
+            <div class="trigger-text">
+                What's on your mind?
+            </div>
+        </div>
+
+        <!-- Expandable Post Form -->
+        <div id="postFormExpanded" class="post-form-expanded" style="display: none;">
+            <form id="post-form" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea class="form-control" name="content" rows="3" 
+                            placeholder="What's happening?" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="image" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-image"></i> Add Photo
+                    </label>
+                    <input type="file" class="d-none" id="image" name="image" 
+                           accept="image/*" onchange="previewImage(this)">
+                </div>
+                <div id="imagePreview" class="mt-2" style="display: none;">
+                    <img id="preview" src="" alt="Preview" class="img-preview">
+                    <button type="button" class="btn btn-sm btn-danger" 
+                            onclick="removeImage()">Remove</button>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" 
+                            onclick="closePostForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <h3 class="mb-4">
+        {% if page_type == 'following' %}
+            Posts from People You Follow
+        {% else %}
+            All Posts
+        {% endif %}
+    </h3>
+
+    <!-- Posts will be listed here -->
+    <div id="posts-container">
+        {% for post in posts %}
+        <div class="post" data-post-id="{{ post.id }}">
+            <div class="post-header">
+                {% if post.user.username %}
+                    <a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
+                {% else %}
+                    Unknown User
+                {% endif %}
+                <div>
+                    <span class="text-muted">{{ post.timestamp|date:"M d Y, g:i A" }}</span>
+                    {% if user == post.user %}
+                        <button class="btn btn-sm btn-outline-primary edit-btn" 
+                                onclick="editPost(this)" 
+                                data-post-id="{{ post.id }}">
+                            Edit
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="post-content">
+                <p class="content-text">{{ post.content }}</p>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" class="post-image" alt="Post image">
+                {% endif %}
+            </div>
+            <div class="post-footer">
+                <span class="likes-count">{{ post.likes.count }} likes</span>
+                <button class="btn btn-sm btn-outline-primary like-btn" 
+                        data-post-id="{{ post.id }}">
+                    {% if user in post.likes.all %}
+                        Unlike
+                    {% else %}
+                        Like
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center mt-4">
+            <p>No posts yet.</p>
+        </div>
+        {% endfor %}     
+    </div>
+
+    <!-- Pagination -->
+    {% if posts.paginator.num_pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if posts.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo; Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; Previous</span>
+                </li>
+            {% endif %}
+
+            {% for num in posts.paginator.page_range %}
+                {% if num == posts.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if posts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ posts.next_page_number }}">Next &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+{% endblock %}
