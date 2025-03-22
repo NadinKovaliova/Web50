@@ -84,30 +84,7 @@ function closePostForm() {
 }
 
 
-// Existing image preview functions
-function previewImage(input) {
-    const preview = document.getElementById('preview');
-    const previewDiv = document.getElementById('imagePreview');
 
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            previewDiv.style.display = 'block';
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function removeImage() {
-    const input = document.getElementById('image');
-    const preview = document.getElementById('preview');
-    const previewDiv = document.getElementById('imagePreview');
-    
-    input.value = '';
-    preview.src = '';
-    previewDiv.style.display = 'none';
-}
 
 function addNewPost(post) {
     const postsContainer = document.getElementById('posts-container');
@@ -116,14 +93,31 @@ function addNewPost(post) {
             <div class="post-header">
                 <strong><a href="/profile/${post.user}">${post.user}</a></strong>
                 <span class="text-muted">${post.timestamp}</span>
+                <button class="btn btn-sm btn-outline-primary edit-btn" 
+                        onclick="editPost(this)" 
+                        data-post-id="${post.id}">
+                    Edit
+                </button>
             </div>
             <div class="post-content">
                 <p class="content-text">${post.content}</p>
-                ${post.image_url ? `<img src="${post.image_url}" class="post-image">` : ''}
+            </div>
+            <div class="post-footer">
+                <span class="likes-count">0 likes</span>
+                <button class="btn btn-sm btn-outline-primary like-btn" 
+                        data-post-id="${post.id}">
+                    Like
+                </button>
             </div>
         </div>
     `;
     postsContainer.insertAdjacentHTML('afterbegin', postHTML);
+
+    const newPost = postsContainer.firstElementChild;
+    const likeButton = newPost.querySelector('.like-btn');
+    likeButton.addEventListener('click', function() {
+        toggleLike(this);
+    });
 }
 
 function editPost(button) {

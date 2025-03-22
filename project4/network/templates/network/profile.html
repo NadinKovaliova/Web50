@@ -1,73 +1,75 @@
 {% extends "network/layout.html" %}
 {% load static %}
 
-{% block body %}
-
-<div class="container">
-    <div class="profile-header mb-4">
-        <h2>{{ profile_user.username }}</h2>
-        <div class="profile-stats">
-            <span>{{ followers_count }} Followers</span>
-            <span class="mx-3">|</span>
-            <span>{{ following_count }} Following</span>
-        </div>
-        
-        {% if user.is_authenticated and user != profile_user %}
-        <button 
-            class="btn {% if is_following %}btn-secondary{% else %}btn-primary{% endif %} follow-button" 
-            data-username="{{ profile_user.username }}"
-            onclick="toggleFollow(this)">
-            {% if is_following %}Unfollow{% else %}Follow{% endif %}
-        </button>
-        {% endif %}
+{% block h3 %}
+<div class="profile-header mb-4">
+    <h2>{{ profile_user.username }}</h2>
+    <div class="profile-stats">
+        <span>{{ followers_count }} Followers</span>
+        <span class="mx-3">|</span>
+        <span>{{ following_count }} Following</span>
     </div>
+    
+    {% if user.is_authenticated and user != profile_user %}
+    <button 
+        class="btn btn-sm like-btn {% if is_following %}btn-secondary{% else %}btn-primary{% endif %} follow-button" 
+        data-username="{{ profile_user.username }}"
+        onclick="toggleFollow(this)">
+        {% if is_following %}Unfollow{% else %}Follow{% endif %}
+    </button>
+    {% endif %}
+</div>
+{% endblock %}
 
-    <div id="posts-container">
-        {% for post in posts %}
-        <div class="post" data-post-id="{{ post.id }}">
-            <div class="post-header">
-                {% if post.user.username %}
-                    <a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
-                {% else %}
-                    Unknown User
-                {% endif %}
-                <div>
-                    <span class="text-muted">{{ post.timestamp|date:"M d Y, g:i A" }}</span>
-                    {% if user == post.user %}
-                        <button class="btn btn-sm btn-outline-primary edit-btn" 
-                                onclick="editPost(this)" 
-                                data-post-id="{{ post.id }}">
-                            Edit
-                        </button>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="post-content">
-                <p class="content-text">{{ post.content }}</p>
-                {% if post.image %}
-                    <img src="{{ post.image.url }}" class="post-image" alt="Post image">
+{% block body %}
+<div id="posts-container">
+    {% for post in posts %}
+    <div class="post" data-post-id="{{ post.id }}">
+        <div class="post-header">
+            {% if post.user.username %}
+                <a href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
+            {% else %}
+                Unknown User
+            {% endif %}
+            <div>
+                <span class="text-muted">{{ post.timestamp|date:"M d Y, g:i A" }}</span>
+                {% if user == post.user %}
+                    <button class="btn btn-sm btn-outline-primary edit-btn" 
+                            onclick="editPost(this)" 
+                            data-post-id="{{ post.id }}">
+                        Edit
+                    </button>
                 {% endif %}
             </div>
-            <div class="post-footer">
-                <span class="likes-count">{{ post.likes.count }} likes</span>
+        </div>
+        <div class="post-content">
+            <p class="content-text">{{ post.content }}</p>
+            
+        </div>
+        <div class="post-footer">
+            <span class="likes-count">{{ post.likes.count }} likes</span>
+            {% if user.is_authenticated %}
                 <button class="btn btn-sm btn-outline-primary like-btn" 
-                        data-post-id="{{ post.id }}"
-                        onclick="toggleLike(this)">
+                        data-post-id="{{ post.id }}">
                     {% if user in post.likes.all %}
                         Unlike
                     {% else %}
                         Like
                     {% endif %}
                 </button>
-            </div>
+            {% endif %}
         </div>
-        {% empty %}
-        <div class="text-center mt-4">
-            <p>No posts yet.</p>
-        </div>
-        {% endfor %}     
     </div>
+    {% empty %}
+    <div class="text-center mt-4">
+        <p>No posts yet.</p>
+    </div>
+    {% endfor %}     
 </div>
+
+
+
+
 
 <script>
 // Helper function to get CSRF token
@@ -114,4 +116,5 @@ function toggleFollow(button) {
     .catch(error => console.error('Error:', error));
 }
 </script>
+
 {% endblock %}

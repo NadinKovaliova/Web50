@@ -49,9 +49,85 @@
           </nav>
         
         <div class="body">
-            {% block body %}
+            <div class="container">
+                {% block h3 %}
+                {% endblock %}
+                {% if user.is_authenticated %}
+                <!-- Collapsed Post Form -->
+                <div class="post-form-container mb-4">
+                    <div class="post-form-trigger" onclick="expandPostForm()">
+                        <div class="avatar">
+                            <!-- You can add user avatar here -->
+                        </div>
+                        <div class="trigger-text">
+                            What's on your mind?
+                        </div>
+                    </div>
+            
+                    <!-- Expandable Post Form -->
+                    <div id="postFormExpanded" class="post-form-expanded" style="display: none;">
+                        <form id="post-form" action="{% url 'create_post' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <textarea class="form-control" name="content" rows="3" 
+                                        placeholder="What's happening?" required></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" 
+                                        onclick="closePostForm()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                {% block body %}
                 
-            {% endblock %}
+                {% endblock %}
+
+                {% block pagination %}
+                <!-- Pagination -->
+                {% if posts.paginator.num_pages > 1 %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if posts.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo; Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo; Previous</span>
+                            </li>
+                        {% endif %}
+
+                        {% for num in posts.paginator.page_range %}
+                            {% if num == posts.number %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if posts.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.next_page_number }}">Next &raquo;</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Next &raquo;</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% endblock %}
+            </div>
+            
         </div>
     </body>
 </html>

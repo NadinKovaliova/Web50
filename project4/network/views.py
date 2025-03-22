@@ -73,12 +73,12 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
-    
+   
 @login_required
 @require_http_methods(["POST"])
 def create_post(request):
     content = request.POST.get("content", "").strip()
-    image = request.FILES.get("image")
+    
 
     if not content:
         return JsonResponse({"error": "Post content is required."}, status=400)
@@ -86,18 +86,16 @@ def create_post(request):
     try:
         post = Post.objects.create(
             user=request.user,
-            content=content,
-            image=image
+            content=content,   
         )
-            
+
      # If it's an AJAX request, return JSON response
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
                 "success": True,
                 "post": {
                     "id": post.id,
-                    "content": post.content,
-                    "image_url": post.image.url if post.image else None,
+                    "content": post.content, 
                     "timestamp": post.timestamp.strftime("%b %d %Y, %I:%M %p"),
                     "user": post.user.username
                 }

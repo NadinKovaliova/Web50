@@ -37,11 +37,7 @@
     border-top: 1px solid #eee;
 }
 
-.img-preview {
-    max-width: 300px;
-    max-height: 300px;
-    border-radius: 8px;
-}
+
 
 .form-actions {
     display: flex;
@@ -76,12 +72,6 @@
     word-break: break-word;
 }
 
-
-.post-image {
-    max-width: 50%;
-    border-radius: 33px;
-    margin-top: 10px;
-}
 
 .post-footer {
     border-top: 1px solid #eee;
