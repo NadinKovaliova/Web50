@@ -6,7 +6,7 @@ This repository contains my solutions to the problem sets from Harvard's [CS50�
 
 | Problem Set | Folder Link             | Demo Video                            |
 |-------------|--------------------------|----------------------------------------| 
-| PSet 0 – Search   | [pset0-search](./search)       | [Watch](https://youtu.be/w7XG7QN9_Pc))        | 
+| PSet 0 – Search   | [pset0-search](./search)       | [Watch](https://youtu.be/w7XG7QN9_Pc)      | 
 | PSet 1 – Wiki     | [pset1-wiki](./wiki)           | [Watch](https://youtu.be/YyVONB_3RAw)      | 
 | PSet 2 – Commerce | [pset2-commerce](./commerce)   | [Watch](https://youtu.be/0-7g8aAayxk)     |
 | PSet 3 – Mail     | [pset3-mail](./mail)           | [Watch](https://youtu.be/haabzUhzgTE)     |
